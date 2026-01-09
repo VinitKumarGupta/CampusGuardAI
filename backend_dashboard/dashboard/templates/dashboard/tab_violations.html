@@ -1,0 +1,95 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<h4 class="mb-3 text-danger">Recorded Violations</h4>
+
+<div id="alert-box" class="alert alert-success d-none position-fixed top-0 end-0 m-3" style="z-index: 1050;">
+    ✅ Alert sent successfully!
+</div>
+
+<div class="row">
+    {% for entry in entries %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-danger">
+            <div class="card-header bg-danger text-white d-flex justify-content-between">
+                <span>{{ entry.timestamp }}</span>
+                <strong>ID: {{ entry.track_id }}</strong>
+            </div>
+            
+            {% if entry.display_image %}
+                <img src="{{ MEDIA_URL }}{{ entry.display_image }}" class="card-img-top" alt="Violation" style="max-height: 250px; object-fit: cover;">
+            {% endif %}
+
+            <div class="card-body">
+                <h5 class="card-title text-danger">{{ entry.violations|join:" + " }}</h5>
+                <p class="card-text mb-1">
+                    <strong>Vehicle:</strong> {{ entry.class|title }}<br>
+                    <strong>Speed:</strong> {{ entry.speed_kmh }} km/h<br>
+                    <strong>Plate:</strong> {{ entry.plate_number }} <br>
+                    <small class="text-muted">Owner: {{ entry.owner_name }}</small>
+                </p>
+            </div>
+            
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <small id="status-{{ entry.track_id }}" class="text-muted">Status: Pending Review</small>
+                
+                {% if entry.phone_number %}
+                <button class="btn btn-sm btn-outline-danger" onclick="sendSMS('{{ entry.track_id }}')">
+                    Send Alert
+                </button>
+                {% else %}
+                <button class="btn btn-sm btn-secondary" disabled>
+                    No Phone Linked
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function sendSMS(trackId) {
+    const btn = event.target;
+    const originalText = btn.innerText;
+    
+    // UI Feedback immediately
+    btn.innerText = "Sending...";
+    btn.disabled = true;
+
+    fetch(`/send_alert/${trackId}/`)
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success') {
+            // 1. Update Button
+            btn.innerText = "✅ Sent";
+            btn.classList.remove('btn-outline-danger');
+            btn.classList.add('btn-success');
+            
+            // 2. Update Status Text (The new part!)
+            const statusLabel = document.getElementById(`status-${trackId}`);
+            if(statusLabel) {
+                statusLabel.innerText = "Status: Action Taken";
+                statusLabel.classList.remove('text-muted');
+                statusLabel.classList.add('text-success', 'fw-bold');
+            }
+
+            // 3. Show Toast
+            const alertBox = document.getElementById('alert-box');
+            alertBox.innerText = `✅ ${data.message}`;
+            alertBox.classList.remove('d-none');
+            setTimeout(() => alertBox.classList.add('d-none'), 3000);
+        } else {
+            alert("Error: " + data.message);
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        btn.innerText = originalText;
+        btn.disabled = false;
+    });
+}
+</script>
+{% endblock %}

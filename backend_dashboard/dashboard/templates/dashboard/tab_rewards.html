@@ -1,0 +1,109 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="text-primary fw-bold">🏆 Safe Miles Program</h4>
+    <button class="btn btn-outline-primary" onclick="alert('Syncing with Banking API...')">
+        🔄 Sync Bank Accounts
+    </button>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5>Credit Rate</h5>
+                <h3>₹2 / Entry</h3>
+                <small>For every safe entry</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h5>Violation Penalty</h5>
+                <h3>+100 Pts</h3>
+                <small>Cumulative Risk Score</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5>Active Users</h5>
+                <h3>{{ drivers|length }}</h3>
+                <small>Vehicles Tracked</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Rank</th>
+                    <th>Driver Details</th>
+                    <th class="text-center">Safe Entries</th>
+                    <th class="text-center">Violations</th>
+                    <th class="text-center">Risk Score</th>
+                    <th class="text-end">Wallet Balance</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for driver in drivers %}
+                <tr class="{{ driver.row_class|default:'' }}">
+                    <td class="fw-bold">#{{ forloop.counter }}</td>
+                    <td>
+                        <div class="fw-bold">{{ driver.plate }}</div>
+                        <small class="text-muted">{{ driver.owner }}</small><br>
+                        <span class="badge bg-light border {{ driver.status_color }}">
+                            {{ driver.status }}
+                        </span>
+                    </td>
+                    <td class="text-center text-success fw-bold">+{{ driver.clean_entries }}</td>
+                    <td class="text-center text-danger fw-bold">{{ driver.violations }}</td>
+                    
+                    <td class="text-center" style="width: 15%;">
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-danger" role="progressbar" 
+                                 style="width: {% widthratio driver.risk_score 500 100 %}%;" 
+                                 aria-valuenow="{{ driver.risk_score }}" aria-valuemin="0" aria-valuemax="500">
+                            </div>
+                        </div>
+                        <small class="text-danger fw-bold">{{ driver.risk_score }} pts</small>
+                    </td>
+
+                    <td class="text-end fw-bold fs-5 text-success">
+                        ₹{{ driver.wallet_balance }}
+                    </td>
+                    
+                    <td>
+                        {% if driver.wallet_balance > 0 %}
+                        <button class="btn btn-sm btn-success" onclick="redeemCredits('{{ driver.plate }}', '{{ driver.wallet_balance }}')">
+                            🏦 Redeem
+                        </button>
+                        {% else %}
+                        <button class="btn btn-sm btn-secondary" disabled>Locked</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="text-center py-4">No data available yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function redeemCredits(plate, amount) {
+    if(confirm(`Transfer ₹${amount} to registered bank account for ${plate}?`)) {
+        alert(`✅ SUCCESS: ₹${amount} initiated via UPI/IMPS to ${plate}.`);
+        // Here you would usually call a backend API to zero out the balance
+    }
+}
+</script>
+{% endblock %}

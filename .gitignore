@@ -1,0 +1,67 @@
+# Dependencies
+venv/
+cv-env/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.mypy_cache/
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Model weights
+*.pt
+*.pth
+yolov8n.pt
+best.pt
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# OS
+Thumbs.db
+
+# Testing
+.pytest_cache/
+htmlcov/
+
+# Misc
+.cache/
+temp/
+tmp/
+
+# Input Video
+cv_engine/media/input/Safetronics-Demo-Video.mp4
+cv_engine/media/input/*.mp4
+cv_engine/media/input/*.avi
+
+# Generated media/output
+cv_engine/media/output/
+cv_engine/media/output/frames/
+cv_engine/media/output/violations/
+
+# Sqlite
+backend_dashboard/db.sqlite3

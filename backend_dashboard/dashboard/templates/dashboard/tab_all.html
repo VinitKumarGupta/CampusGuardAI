@@ -1,0 +1,37 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<h4 class="mb-3">Vehicle Entry Log</h4>
+<table class="table table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Time</th>
+            <th>Class</th>
+            <th>Speed</th>
+            <th>Plate Number</th>
+            <th>Authorization</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in entries %}
+        <tr>
+            <td>{{ entry.timestamp }}</td>
+            <td><span class="badge bg-info text-dark">{{ entry.class|upper }}</span></td>
+            <td>{{ entry.speed_kmh }} km/h</td>
+            <td class="fw-bold font-monospace">{{ entry.plate_number }}</td>
+            <td class="{{ entry.auth_color }} fw-bold">{{ entry.auth_status }}</td>
+            <td>
+                {% if entry.is_violation %}
+                    <span class="badge bg-danger">{{ entry.violations|join:", " }}</span>
+                {% else %}
+                    <span class="badge bg-success">Clean</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center">No data found in JSON log.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
