@@ -38,9 +38,9 @@ A Django-based web application that serves as the interface for security personn
 
 Unlike overhead cameras that use simple vertical displacement, this system accommodates diagonal road geometries.
 
-* **Calibration:** Two reference lines ( and ) are defined in the image plane.
+* **Calibration:** Two reference lines ($L_A$ and $L_B$) are defined in the image plane.
 * **Logic:** The system computes the cross-product of the vehicle's centroid vector relative to the reference lines. A sign change in the cross-product indicates a crossing event.
-* **Velocity ():** Calculated as , where  is the real-world distance (calibrated to 4.9 meters) and  is the frame delta derived from the video framerate (30 FPS).
+* **Velocity ():** Calculated as $v = \frac{d}{\Delta t}$, where $d$ is the real-world distance (calibrated to 4.9 meters) and $d$ is the frame delta derived from the video framerate (30 FPS).
 
 ### 4.2 Passenger Counting (Triple Riding Detection)
 
@@ -62,7 +62,7 @@ The `PlateReader` module executes a two-stage inference:
 
 ### Technology Stack
 
-* **Language:** Python 3.x
+* **Language:** Python 3
 * **Computer Vision:** OpenCV, Ultralytics YOLOv8, EasyOCR, NumPy
 * **Web Framework:** Django 5.2
 * **Database:** SQLite (Development), adaptable to PostgreSQL
