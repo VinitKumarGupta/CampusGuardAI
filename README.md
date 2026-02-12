@@ -85,7 +85,7 @@ The `PlateReader` module executes a two-stage inference:
 
 1. **Clone the Repository:**
 ```bash
-git clone https://github.com/vinitkumargupta/campusguardai.git
+git clone https://github.com/VinitKumarGupta/CampusGuardAI.git
 cd campusguardai
 ```
 
